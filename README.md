@@ -26,27 +26,6 @@ This project has been organized into a structured directory layout to improve ma
     └── wsi.py                # Whole Slide Image utilities
 ```
 
-## File Path Updates
-
-When running notebooks, you'll need to update file paths to reflect the new directory structure. Here are the common path changes:
-
-### In notebooks/yolo_conversion/
-
-- Old: `./data/slide-2024-04-03T07-52-35-R1-S2.geojson`
-- New: `../../data/raw/slides/slide-2024-04-03T07-52-35-R1-S2.geojson`
-
-### In notebooks/visualization/
-
-- Old: `./expanded_bboxes.geojson`
-- New: `../../data/processed/annotations/expanded_bboxes.geojson`
-
-- Old: `./data/slide-2024-04-03T07-52-35-R1-S2.mrxs`
-- New: `../../data/raw/slides/slide-2024-04-03T07-52-35-R1-S2.mrxs`
-
-### In notebooks/segmentation/
-
-- Old: `./outputs/`
-- New: `../../outputs/`
 
 ## Workflow
 
