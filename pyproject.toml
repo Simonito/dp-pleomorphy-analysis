@@ -1,0 +1,18 @@
+[project]
+name = "tile-and-segment-instances"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "geojson>=3.2.0",
+    "geopandas>=1.1.1",
+    "instanseg-torch[full]==0.0.9",
+    "large-image[openslide]>=1.33.0",
+    "matplotlib>=3.10.6",
+    "numpy>=1.24,<2.0",
+    "openslide-python>=1.4.2",
+    "shapely>=2.1.2",
+    "tifffile>=2023.12.9,<2025.2.18",
+    "tqdm>=4.67.1",
+]

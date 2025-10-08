@@ -1,0 +1,16 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# macos specific
+**/.DS_Store
+
+# large data files (let's not pollute git with that)
+data/
+
+# Virtual environments
+.venv
