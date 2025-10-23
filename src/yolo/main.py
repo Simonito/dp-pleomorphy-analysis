@@ -11,6 +11,8 @@ from convert_annotations import YOLOAnnotationConverter
 from prepare_yolo_finetuning import YOLOFinetuningPreparation
 
 
+OUT_DIR = "yolo-larger-1024"
+
 def main():
     parser = argparse.ArgumentParser(description="Convert remapped annotations to YOLO format and prepare finetuning")
 
@@ -22,14 +24,15 @@ def main():
                         help="Path to the extracted region image")
     
     # out directories
-    parser.add_argument("--annotations_dir", type=str, default="data/processed/yolo2",
+    parser.add_argument("--annotations_dir", type=str, default=f"data/processed/{OUT_DIR}/yolo",
                         help="Directory to save the YOLO annotations")
-    parser.add_argument("--dataset_dir", type=str, default="data/processed/yolo_dataset2",
+    parser.add_argument("--dataset_dir", type=str, default=f"data/processed/{OUT_DIR}/yolo_dataset",
                         help="Directory to save the YOLO dataset")
     
     # annotation options
     parser.add_argument("--output_prefix", type=str, default="yolo_annotations",
                         help="Prefix for output files")
+    parser.add_argument("--tile_size", type=int, default=1024)
     parser.add_argument("--default_margin", type=int, default=20,
                         help="Default margin to add around bounding boxes")
     parser.add_argument("--use_adaptive_margin", action="store_true", default=True,
@@ -59,7 +62,8 @@ def main():
         args.remapped_geojson,
         args.extracted_region,
         args.annotations_dir,
-        args.default_margin
+        args.default_margin,
+        tile_size=args.tile_size,
     )
 
     result_paths = converter.process(args.output_prefix, args.use_adaptive_margin)
@@ -79,9 +83,8 @@ def main():
     dataset_paths = preparation.process()
     
     print(f"Dataset prepared in: {args.dataset_dir}")
-    print(f"Images and annotations placed in {dataset_paths['dataset']} set")
+    print(f"Images and annotations processed. Using {dataset_paths['train_pairs']} training pairs and {dataset_paths['val_pairs']} validation pairs.")
     print(f"Data YAML file created at: {dataset_paths['data_yaml']}")
-    print(f"Model YAML file created at: {dataset_paths['model_yaml']}")
     print(f"Training script created at: {dataset_paths['train_script']}")
     print("\nTo train the model, run:")
     print(f"cd {args.dataset_dir} && python train.py")

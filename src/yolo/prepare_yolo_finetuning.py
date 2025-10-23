@@ -66,11 +66,7 @@ class YOLOFinetuningPreparation:
 
         print(f">>> out_dir = {self.converter_output_dir}")
         for image_file in Path(self.converter_output_dir).rglob("*"):
-        #     if image_file.suffix.lower() in valid_exts:
-        #         label_file = image_file.with_suffix(".txt")
-        #         print('>>< got img: ', image_file, ' looking for label: ', label_file)
-        #         if label_file.exists():
-        #             pairs.append((str(image_file), str(label_file)))
+
             matched = False
             for double_ext in valid_double_exts:
                 if image_file.name.lower().endswith(double_ext):
@@ -126,46 +122,6 @@ class YOLOFinetuningPreparation:
             yaml.dump(data, f, default_flow_style=False, sort_keys=False)
         return yaml_path
 
-    def create_model_yaml(self, num_classes: int) -> str:
-        """Create basic YOLOv8 model.yaml."""
-        model_config = {
-            "nc": num_classes,
-            "depth_multiple": 0.33,
-            "width_multiple": 0.50,
-            "backbone": [
-                [-1, 1, "Conv", [64, 6, 2, 2]],
-                [-1, 1, "Conv", [128, 3, 2]],
-                [-1, 3, "C3", [128]],
-                [-1, 1, "Conv", [256, 3, 2]],
-                [-1, 6, "C3", [256]],
-                [-1, 1, "Conv", [512, 3, 2]],
-                [-1, 9, "C3", [512]],
-                [-1, 1, "Conv", [1024, 3, 2]],
-                [-1, 3, "C3", [1024]],
-                [-1, 1, "SPPF", [1024, 5]],
-            ],
-            "head": [
-                [-1, 1, "Conv", [512, 1, 1]],
-                [-1, 1, "nn.Upsample", ["None", 2, "nearest"]],
-                [[-1, 6], 1, "Concat", [1]],
-                [-1, 3, "C3", [512, False]],
-                [-1, 1, "Conv", [256, 1, 1]],
-                [-1, 1, "nn.Upsample", ["None", 2, "nearest"]],
-                [[-1, 4], 1, "Concat", [1]],
-                [-1, 3, "C3", [256, False]],
-                [-1, 1, "Conv", [256, 3, 2]],
-                [[-1, 14], 1, "Concat", [1]],
-                [-1, 3, "C3", [512, False]],
-                [-1, 1, "Conv", [512, 3, 2]],
-                [[-1, 10], 1, "Concat", [1]],
-                [-1, 3, "C3", [1024, False]],
-                [[17, 20, 23], 1, "Detect", [num_classes, [8, 16, 32]]],
-            ],
-        }
-        yaml_path = os.path.join(self.output_dir, "model.yaml")
-        with open(yaml_path, "w") as f:
-            yaml.dump(model_config, f, default_flow_style=False, sort_keys=False)
-        return yaml_path
 
     def create_training_script(self) -> str:
         """Generate train.py for YOLOv8 training."""
@@ -177,7 +133,7 @@ def train_yolo(data_yaml, epochs=100, batch_size=16, img_size=640, weights=None)
     if weights:
         model = YOLO(weights)
     else:
-        model = YOLO('yolov8n.pt')
+        model = YOLO('yolo12n.pt')
     model.train(
         data=data_yaml,
         epochs=epochs,
@@ -219,14 +175,12 @@ if __name__ == "__main__":
         class_names = list(class_mapping.keys())
 
         data_yaml = self.create_data_yaml(class_names)
-        model_yaml = self.create_model_yaml(len(class_names))
         train_script = self.create_training_script()
 
         return {
             "train_pairs": len(train_pairs),
             "val_pairs": len(val_pairs),
             "data_yaml": data_yaml,
-            "model_yaml": model_yaml,
             "train_script": train_script,
         }
 
