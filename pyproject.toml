@@ -15,4 +15,5 @@ dependencies = [
     "shapely>=2.1.2",
     "tifffile>=2023.12.9,<2025.2.18",
     "tqdm>=4.67.1",
+    "ultralytics>=8.3.207",
 ]
